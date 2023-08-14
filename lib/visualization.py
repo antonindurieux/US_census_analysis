@@ -1,45 +1,36 @@
+import warnings
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
 
-def get_variable_crosstab(
-    learn_df: pd.DataFrame, test_df: pd.DataFrame, variable: str
-) -> pd.DataFrame:
+def plot_variable_histograms(df: pd.DataFrame, variable: str) -> None:
     """
-    Return crosstab DataFrame of a variable for categorical plot.
+    Plot a facetgrid of the chosen variable
+    - Left plot is corresponding to the learn set data, right plot to the test set data
+    - Blue hue is the distribution of the '-50000' entries, Orange hue of the '50000+' entries.
 
     Args:
-        learn_df (pd.DataFrame): Learn DataFrame.
-        test_df (pd.DataFrame): Test DataFrame
-        variable (str): Columns name.
-
-    Returns:
-        pd.DataFrame: Crosstab DataFrame.
+        df (pd.DataFrame): DataFrame containing learn and test concatenated data.
+        variable (str): Variable to plot.
     """
-    learn_crosstb = pd.crosstab(
-        learn_df[variable],
-        learn_df["target"],
-        normalize="index",
-    )
-    learn_crosstb["set"] = "learn"
-    test_crosstb = pd.crosstab(
-        test_df[variable],
-        test_df["target"],
-        normalize="index",
-    )
-    test_crosstb["set"] = "test"
-    crosstab_df = pd.concat([learn_crosstb, test_crosstb]).reset_index()
-    crosstab_df = crosstab_df.rename(columns={"50000+.": "Proportion of 50000+"})
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
 
-    return crosstab_df
-
-
-def plot_target_proportion_vs_categorical(learn_df, test_df, variable):
-    sns.barplot(
-        data=get_variable_crosstab(learn_df, test_df, variable),
-        x=variable,
-        y="Proportion of 50000+",
-        hue="set",
-    )
-    plt.xticks(rotation=45)
+        g = sns.FacetGrid(df, col="set", height=5, aspect=1.5)  # type: ignore
+        g.map_dataframe(
+            sns.histplot,
+            x=variable,
+            hue="target",
+            stat="probability",
+            common_norm=False,
+            multiple="dodge",
+            shrink=0.8,
+            legend=True,
+            alpha=1,
+        )
+        plt.legend(["50000+", "-50000"])
+        [plt.setp(ax.get_xticklabels(), rotation=90) for ax in g.axes.flat]
+        plt.suptitle(f"{variable} distribution (learn and test sets)", y=1.02)
+        plt.show()
