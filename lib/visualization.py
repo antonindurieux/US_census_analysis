@@ -1,6 +1,7 @@
 import itertools
 import warnings
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -8,19 +9,21 @@ import seaborn as sns
 from matplotlib.figure import Figure
 from scipy import stats
 
+plt.style.use("seaborn-v0_8")
+
 
 def plot_learn_test_variable_histograms(
     df: pd.DataFrame, variable: str, target: str
 ) -> None:
     """
-    Plot a facetgrid of the chosen variable
+    Plot a facetgrid histograms of the chosen variable
     - Left plot is corresponding to the learn set data, right plot to the test set data
-    - Blue hue is the distribution of the '<50000' entries, Orange hue of the '>50000' entries.
+    - Blue hue is the distribution of the '<50000' entries, green hue of the '>50000' entries.
 
     Args:
         df (pd.DataFrame): DataFrame containing learn and test concatenated data.
         variable (str): Variable to plot.
-        target (str): Target variable
+        target (str): Target variable.
     """
     if variable in [
         "wage per hour",
@@ -56,6 +59,55 @@ def plot_learn_test_variable_histograms(
         [plt.setp(ax.get_xticklabels(), rotation=90) for ax in g.axes.flat]
         plt.suptitle(f"{variable} distribution (learn and test sets)", y=1.02)
         plt.show()
+
+
+def plot_single_variable_histogram(
+    df: pd.DataFrame, variable: str, target: str
+) -> matplotlib.pyplot.figure:  # type: ignore
+    """
+    Plot an histogram of the chosen variable.
+    Blue hue is the distribution of the '<50000' entries, green hue of the '>50000' entries.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing learn and test concatenated data.
+        variable (str): Variable to plot.
+        target (str): Target variable.
+
+    Returns:
+        matplotlib.pyplot.figure: Histogram figure.
+    """
+    fig, ax = plt.subplots(figsize=(7, 4))
+    if variable in [
+        "wage per hour",
+        "capital gains",
+        "capital losses",
+        "dividends from stocks",
+    ]:
+        ylog = True
+    else:
+        ylog = False
+
+    sns.histplot(
+        data=df,
+        x=variable,
+        hue=target,
+        stat="probability",
+        common_norm=False,
+        multiple="dodge",
+        shrink=0.8,  # type: ignore
+        alpha=1,
+        log_scale=[False, ylog],
+        bins=sorted(df[variable].unique())
+        if variable in ["age", "weeks worked in year"]
+        else "auto",  # type: ignore
+        ax=ax,
+    )
+    plt.legend([">50000", "<50000"])
+    plt.ylabel("Proportion (log scale)" if ylog else "Proportion")
+    plt.xticks(rotation=90)
+    plt.suptitle(f"{variable} distribution", y=1.02)
+
+    return fig
 
 
 def cramers_corrected_stat(confusion_matrix: pd.DataFrame) -> np.ndarray:
