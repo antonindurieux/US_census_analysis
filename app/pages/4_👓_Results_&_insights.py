@@ -42,7 +42,7 @@ st.markdown(
 if "shap_values" not in st.session_state:
     with st.spinner("Computing SHAP values (should take less than a min)..."):
         X_learn_sample = X_learn.sample(
-            20000, random_state=RANDOM_SEED
+            10000, random_state=RANDOM_SEED
         )  # sample to reduce execution time
         transformed_data = hgb_pipeline["col_trans"].transform(X_learn_sample)
         st.session_state["X_shap_sample"] = pd.DataFrame(

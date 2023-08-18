@@ -66,7 +66,7 @@ with warnings.catch_warnings():
         legend=True,
         alpha=1,
     )
-    plt.xticks([1.0, 0.0], ["True", "False"])
+    plt.xticks([1.0, 0.0], [">50000", "<50000"])
     plt.legend([">50000", "<50000"])
     plt.suptitle("Target values count in train and test set", y=1.02)
 

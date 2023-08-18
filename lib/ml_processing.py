@@ -131,7 +131,7 @@ def train_and_evaluate_models(
     X_test: pd.DataFrame,
     y_learn: pd.Series,
     y_test: pd.DataFrame,
-) -> tuple[dict[str, sklearn.pipeline.Pipeline], pd.DataFrame,]:  # type: ignore
+) -> tuple[dict[str, sklearn.pipeline.Pipeline], pd.DataFrame, pd.DataFrame]:  # type: ignore
     """
     Train pipelines and compute corresponding precisions, recalls and F1-scores.
 
@@ -143,7 +143,7 @@ def train_and_evaluate_models(
         y_test (pd.DataFrame): DataFrame of test labels.
 
     Returns:
-        tuple[dict[str, sklearn.pipeline.Pipeline], pd.DataFrame,]: Dictionary of fitted pipelines, and metrics DataFrame.
+        tuple[dict[str, sklearn.pipeline.Pipeline], pd.DataFrame, pd.DataFrame]: Dictionary of fitted pipelines, metrics, and predictions DataFrames.
     """
     metrics_df = pd.DataFrame()
     target = y_test.columns[0]
@@ -178,4 +178,4 @@ def train_and_evaluate_models(
             y_test[target] != y_test[f"pred_{model_name}"]
         ).sum() / len(y_test)
 
-    return pipelines, metrics_df
+    return pipelines, metrics_df, y_test

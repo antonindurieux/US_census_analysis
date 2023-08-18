@@ -48,8 +48,8 @@ with num_tab:
             options=(numerical_cols),
         )
 
-    fig = visualization.plot_single_variable_histogram(df, variable, target)  # type: ignore
-    st.pyplot(fig)
+    fig1 = visualization.plot_single_variable_histogram(df, variable, target)  # type: ignore
+    st.pyplot(fig1)
 
     if variable == "age":
         st.markdown(
@@ -87,7 +87,7 @@ with num_tab:
     st.header("Correlation matrix of numerical variables")
 
     corr = learn_test_df[numerical_cols + [target]].corr()
-    fig, ax = plt.subplots(figsize=(5, 4))
+    fig2, ax = plt.subplots(figsize=(5, 4))
     cmap = sns.diverging_palette(230, 20, as_cmap=True)
     sns.heatmap(
         corr,
@@ -99,7 +99,7 @@ with num_tab:
         linewidths=0.5,  # type: ignore
         cbar_kws={"shrink": 0.5},
     )
-    st.pyplot(fig)
+    st.pyplot(fig2)
 
     st.markdown(
         """
@@ -129,8 +129,8 @@ with cat_tab:
             options=(categorical_cols),
         )
 
-    fig = visualization.plot_single_variable_histogram(df, variable, target)  # type: ignore
-    st.pyplot(fig)
+    fig3 = visualization.plot_single_variable_histogram(df, variable, target)  # type: ignore
+    st.pyplot(fig3)
 
     md_col1, md_col2 = st.columns(2)
     with md_col1:
@@ -178,7 +178,7 @@ with cat_tab:
                 learn_test_df, categorical_cols + [target]
             )
 
-    fig, ax = plt.subplots(figsize=(11, 9))
+    fig4, ax = plt.subplots(figsize=(11, 9))
     cmap = sns.diverging_palette(230, 20, as_cmap=True)
 
     sns.heatmap(
@@ -192,9 +192,8 @@ with cat_tab:
         cbar_kws={"shrink": 0.5},
     )
     plt.title("Cramér's V association matrix of categorical variables")
-    plt.show()
 
-    st.pyplot(fig)
+    st.pyplot(fig4)
 
     st.markdown(
         """

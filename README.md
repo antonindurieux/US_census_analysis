@@ -10,7 +10,8 @@ The notebook and the app are following the same steps:
 
 ## Usage  
 
-Install the necessary packages in your environment: ```pip install -r requirements.txt```
+Install the necessary packages in your environment: ```pip install -r requirements.txt```.  
+The data will be automatically downloaded, either by launching the notebook or the app.  
 
 ### Notebook  
 
